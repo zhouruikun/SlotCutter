@@ -4,7 +4,7 @@
  //	www.51c51.net 0531-85817017 
 #include "main.h"
 #include "stm32f1xx_hal.h"
- 
+ #include "comm.h"
 //-----------------HT1628端口定义---------------- 
 /********************************************************************************/
  //SDO	 PE11	
@@ -48,5 +48,7 @@ uint8_t checkKey(uint16_t keyNum);
 void HT1621_dis_num(uint8_t pos,uint8_t num);
 //显示带小数点的数字  最大99999 
 void HT1621_dis_float(uint32_t num,uint8_t startPos ,uint8_t len,uint8_t pointPos);
+///以上程序为LED驱动程序
+void HT1621_dis_point(uint8_t pos,uint8_t enable);
 #endif  
 	 

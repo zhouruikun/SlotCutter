@@ -26,7 +26,7 @@
 KEY_STATUS_e key_check(uint8_t key)
 {
 	
-			if(checkKey(key))   //KEY_为采样最大误差
+			if(checkKey(key))    
 				{
 					return KEY_DOWN;             //按键被按下
 				}
@@ -96,6 +96,8 @@ uint8_t checkIdle(uint8_t keyNum)
 {
 	if(keytime[keyNum]>0)
 	{
+
+		
 		return 0;
 	}
 	else
@@ -177,8 +179,5 @@ void key_IRQHandler(void)
 * 输      入  : 无.
 * 返      回  : 无.
 ************************************************************************/
-uint16_t absi(int16_t data_s)
-{
-	return data_s>=0?data_s:-data_s;
-}
+ 
 //*****************************END**********************************

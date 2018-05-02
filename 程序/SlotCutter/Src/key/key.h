@@ -36,6 +36,9 @@ typedef enum
    Key_DOWN,
    Key_L ,
    Key_R  , 
+   Key_OUT_STOP  ,
+   Key_OUT_START ,
+   Key_OUT_SHUTDOWN  ,	
    KEY_MAX,
 } KEY_e;
 

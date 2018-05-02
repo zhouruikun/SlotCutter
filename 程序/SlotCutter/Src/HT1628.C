@@ -2,7 +2,7 @@
  //	www.51c51.net 0531-85817017 
 #include "HT1628.h"
 #include "key.h"
-unsigned char lum=0x8c;//控制显示：显示控制位：1 0 * *  b3 b2 b1 b0 
+unsigned char lum=0x88;//控制显示：显示控制位：1 0 * *  b3 b2 b1 b0 
 //b3=0(显示关)；b3=1(显示开)； b2 b1 b0 有8中选择 000 001 010 011 100 101 110 111
 //所有lum的值有：0x88   0x89   0x8a  0x8b   0x8c   0x8d   0x8e   0x8f
 unsigned char bitdisplay[6]={0x02,0x08,0x01,0x04,0x10,0x20}; //代表哪位数码管 02是第一位08是第二位.....
@@ -104,7 +104,9 @@ uint8_t checkKey(uint16_t keyNum)
 			 
 		case Key_STOP:
 					if((keyBuff[2]&0x08)==0x08)
-								return 1;
+					{
+						pause_flag=1;return 1;
+					}
 							else
 								return 0;
 		 
@@ -137,7 +139,24 @@ uint8_t checkKey(uint16_t keyNum)
 								return 1;
 							else
 								return 0;
-					
+		case Key_OUT_STOP:
+						if(HAL_GPIO_ReadPin(Key_Stop_GPIO_Port,Key_Stop_Pin)==GPIO_PIN_RESET)
+						{
+								 
+								return 1;
+						}
+						else
+								return 0;	
+		case Key_OUT_START:
+						if(HAL_GPIO_ReadPin(Key_Start_GPIO_Port,Key_Start_Pin)==GPIO_PIN_RESET)
+								return 1;
+						else
+								return 0;	
+		case Key_OUT_SHUTDOWN:
+						if(HAL_GPIO_ReadPin(Key_Shutdown_GPIO_Port,Key_Shutdown_Pin)==GPIO_PIN_RESET)
+								return 1;
+						else
+								return 0;											
 		default:
 			break;
 		
@@ -203,6 +222,17 @@ void delay(void)
 			__nop();__nop();__nop();
 }
 ///以上程序为LED驱动程序
+void HT1621_dis_point(uint8_t pos,uint8_t enable)
+{
+	if(enable)
+	{
+		displaydata[pos*2]|=0x80;
+	}
+	else
+	{
+		displaydata[pos*2]&= ~0x80;
+	}
+}
 
 void HT1621_dis_num(uint8_t pos,uint8_t num)
 {

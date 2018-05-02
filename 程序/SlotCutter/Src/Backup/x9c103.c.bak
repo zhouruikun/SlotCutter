@@ -29,7 +29,7 @@ void X9C103_Inc_N_Step(unsigned char Sel,unsigned char N);
 void X9C103_Dec_N_Step(unsigned char Sel,unsigned char N); 
 void Delay(unsigned int t) ; 
 void X9C103_Init(unsigned char Sel);//???????? 
- 
+ int8_t x9cpos = 0;
 //??us???  
 void Delay(unsigned int t)  
 {  
@@ -122,6 +122,21 @@ void X9C103_Dec_N_Step(unsigned char Sel,unsigned char N)
  
 void X9C103_Init(unsigned char Sel) 
 { 
-  X9C103_Dec_N_Step(Sel,22);  
+  X9C103_Dec_N_Step(Sel,99);  
+	X9C103_Inc_N_Step(Sel,49);  
+	x9cpos = 0;
 }  
+//µÁ—π-50 µΩ50  
+void X9C103_Set(int8_t voltage)
+{
+	if(voltage<x9cpos)
+	{
+		X9C103_Dec_N_Step(1,x9cpos-voltage);  
+	}
+	else if(voltage>x9cpos)
+	{
+		X9C103_Inc_N_Step(1,voltage-x9cpos);  
+	}
+	x9cpos = voltage;
+}
 

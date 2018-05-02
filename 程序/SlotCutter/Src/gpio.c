@@ -50,7 +50,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
 /* USER CODE BEGIN 0 */
-
+#include "comm.h"
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
@@ -83,7 +83,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, Material_R_Push_Pin|X_CS_Pin|X_UD_Pin|X_INC_Pin 
-                          |Footer_Pull_Pin|Footer_Push_Pin|Cutter_Sensor_Start_Pin, GPIO_PIN_RESET);
+                          |Footer_Pull_Pin|Footer_Push_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, Cutter_Pull_Pin|Cutter_Push_Pin|Step_Motor_Dir_Pin|TM1628_DIO_Pin 
@@ -96,9 +96,9 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin PAPin PAPin 
-                           PAPin PAPin PAPin */
+                           PAPin PAPin */
   GPIO_InitStruct.Pin = Material_R_Push_Pin|X_CS_Pin|X_UD_Pin|X_INC_Pin 
-                          |Footer_Pull_Pin|Footer_Push_Pin|Cutter_Sensor_Start_Pin;
+                          |Footer_Pull_Pin|Footer_Push_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -111,26 +111,67 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = CCD_Input_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(CCD_Input_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PAPin PAPin PAPin PAPin */
+  GPIO_InitStruct.Pin = Cutter_Sensor_Start_Pin|Cutter_Sensor_End_Pin|Footer_Sensor_Start_Pin|Footer_Sensor_End_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = Cutter_Sensor_Mid_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(Cutter_Sensor_Mid_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pins : PBPin PBPin PBPin PBPin 
-                           PBPin PBPin PBPin PBPin */
-  GPIO_InitStruct.Pin = CCD_Input_Pin|Material_R_Sensor_Start_Pin|Material_R_Sensor_End_Pin|Ket_Start_Pin 
-                          |Ket_Stop_Pin|Ket_Shutdown_Pin|Saved_Input0_Pin|Saved_Input1_Pin;
+                           PBPin */
+  GPIO_InitStruct.Pin = Material_R_Sensor_Start_Pin|Material_R_Sensor_End_Pin|Key_Start_Pin|Key_Stop_Pin 
+                          |Key_Shutdown_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PBPin PBPin */
+  GPIO_InitStruct.Pin = Saved_Input0_Pin|Saved_Input1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PAPin PAPin PAPin PAPin 
-                           PAPin */
-  GPIO_InitStruct.Pin = Cutter_Sensor_Mid_Pin|Cutter_Sensor_End_Pin|Footer_Sensor_Start_Pin|Footer_Sensor_Mid_Pin 
-                          |Footer_Sensor_End_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI3_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
 /* USER CODE BEGIN 2 */
 
+
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+
+	  if(Key_KeyTask_BinaryHandle!=NULL)
+		{
+			xSemaphoreGiveFromISR(Key_KeyTask_BinaryHandle,NULL);
+			xSemaphoreGiveFromISR(Key_Sensor_BinaryHandle,NULL);
+		}
+	
+}
 /* USER CODE END 2 */
 
 /**

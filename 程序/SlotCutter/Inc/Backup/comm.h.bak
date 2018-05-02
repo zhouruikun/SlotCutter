@@ -1,6 +1,9 @@
 #ifndef __COMM_H
 #define __COMM_H
 #include "main.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
 #include "stm32f1xx_hal.h"
 #define INDEX_VALUE 0
 #define INDEX_POINT 1
@@ -11,6 +14,14 @@
 #define STATUS_LED_INIT 2
 #define STATUS_LED_MOD_PARA 3
 #define STATUS_LED_STANDBY 4
+
+#define STATUS_MOTO_TEST 5
+#define STATUS_MOTO_IDLE 6
+#define STATUS_MOTO_RUN 7
+#define STATUS_MOTO_ERR 8
+#define STATUS_MOTO_INIT 9
+#define STATUS_MOTO_STOP 10
+#define STATUS_MOTO_TEST2 11
 
 #define STANDBY_TIME 100
 
@@ -31,13 +42,19 @@ typedef struct {
 	uint16_t stepMotoSlopeTime[5];
 	uint16_t stepMotoRunSpeed[5];
 	uint16_t stepMotoFinishTime[5];	
-	short compareThreshold[5];
+	uint16_t compareThreshold[5];
 	uint16_t qualifiedRate[5];
 }SettingType;
 union SettingUnion{
 	SettingType SettingStruct;
 	uint16_t SettingArray[16][5];
 };
+extern osSemaphoreId Key_KeyTask_BinaryHandle;
+extern osSemaphoreId CCD_BinaryHandle;
+extern osSemaphoreId Key_Sensor_BinaryHandle;
+extern uint8_t moto_msg[2];
+extern QueueHandle_t led_key_queue; 
+extern QueueHandle_t led_moto_queue; 
 extern union SettingUnion Setting ;
 #endif
 

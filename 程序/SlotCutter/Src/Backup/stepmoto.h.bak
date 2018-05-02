@@ -4,7 +4,8 @@
  //	www.51c51.net 0531-85817017 
 #include "main.h"
 #include "stm32f1xx_hal.h"
-void startMoto(uint16_t Pluse); 
-uint16_t stopMoto(void);
-void setMotoSpeed(uint16_t Speed);
+void runMoto(uint32_t Pluse);
+void startMoto(uint32_t Pluse); 
+uint32_t stopMoto(void);
+void setMotoSpeed(uint32_t Speed);
 #endif  
