@@ -30,24 +30,26 @@
 #define STANDBY_TIME 100
 
 typedef struct {
+//参数读出函数 如果第一次则初始化
+ 
 	uint16_t diameter[5];
 	uint16_t slotNumber[5];
 	uint16_t micaWidth[5];
-	uint16_t micaPreTrace[5];
+	uint16_t percentOfPassPreCut[5];
 	uint16_t motoCompensation[5];
 	uint16_t millingMethod[5];
 	uint16_t motoDirection[5];
-	uint16_t feedDelayTime[5];
-	uint16_t feedActionTime[5];
-	uint16_t productDeviation[5];
-	uint16_t feedPreCutTime[5];
-	uint16_t millingPreBackTime[5];
+	uint16_t feedOnTime[5];
+	uint16_t percentOfPassOnCut[5];
+	uint16_t footerOnTime[5];
+	uint16_t feedOffTime[5];
 	uint16_t plusNumberOfMoto[5];
-	uint16_t stepMotoSlopeTime[5];
-	uint16_t stepMotoRunSpeed[5];
-	uint16_t stepMotoFinishTime[5];	
+	uint16_t mode0DirSwitchTime[5];
+	uint16_t stepMotoInitSpeed[5];
+	uint16_t stepMotoRunSpeed[5];	
 	uint16_t compareThreshold[5];
-	uint16_t qualifiedRate[5];
+	uint16_t stepMotoFinishTime[5];
+	uint16_t micaPreTrace[5];
 
 }SettingType;
 union SettingUnion{
