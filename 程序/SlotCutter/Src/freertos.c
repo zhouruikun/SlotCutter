@@ -534,7 +534,7 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 	}
 	return num + power;
 }
- 
+
 
 	//参数读出函数 如果第一次则初始化
  
