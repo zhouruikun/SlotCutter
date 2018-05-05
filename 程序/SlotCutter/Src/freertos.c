@@ -920,7 +920,7 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 	}
 	return num + power;
 }
-	//参数读出函数 如果第一次则初始化
+//参数读出函数 如果第一次则初始化
 	void arg_read(void)
 	{
 		STMFLASH_Read( FLASH_BASE+60*1024, (uint16_t *) &Setting, sizeof(Setting)/2 );           //从指定地址开始读出指定长度的数据	
@@ -988,5 +988,4 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 	}
 	
 /* USER CODE END Application */
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
