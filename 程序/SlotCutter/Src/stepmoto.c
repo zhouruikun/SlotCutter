@@ -9,15 +9,13 @@ uint32_t stepMotoSlope_set;
 uint32_t stepMotoSlope_speed;
 uint32_t get_moto_pluse(void)
 {
-	return stepMotoPluse;
+	return stepMotoPluse/2;
 }
 
-void runMoto(uint32_t Pluse)
+void runMoto(uint32_t Pluse,uint32_t slope , uint8_t dir)
 {
-	TIM1->CNT=0;
-	TIM1->CCR2 =stepMotoSpeed;
-	HAL_TIMEx_OCN_Start_IT(&htim1,TIM_CHANNEL_2);
-	stepMotoPluse = Pluse;
+//电机启动 Pluse脉冲   ，slope 斜率 dir  方向
+  startMoto(  Pluse,  slope ,  dir);
 	while(stepMotoPluse!=0)
 	{
 		osDelay(1);
@@ -92,11 +90,15 @@ void setMotoSpeed(uint32_t Speed)
 	Speed = 1000000/Speed;
 	stepMotoSpeed = Speed-1;
 }
-//1ms计算一次 递增1.6% 最大60%
+//一个脉冲计算一次  一个脉冲增加1.6%
 void speedCal(void)
 {
-	uint32_t index_k =6000/Setting.SettingStruct.stepMotoSlopeTime[INDEX_VALUE];
-
+	uint32_t index_k =30;
+	
+	
+	 uint32_t inc = 1000000/Setting.SettingStruct.stepMotoInitSpeed[INDEX_VALUE]-1000000/Setting.SettingStruct.stepMotoRunSpeed[INDEX_VALUE];
+	
+		inc/=index_k;
 		if(stepMotoSlope_set/2<index_k)
 			{
 				index_k=stepMotoSlope_set/2;
@@ -107,11 +109,11 @@ void speedCal(void)
 			stepMotoSlope++;
 			if(stepMotoSlope<index_k) 
 			{
-				stepMotoSlope_speed = stepMotoSpeed*stepMotoSlope*Setting.SettingStruct.stepMotoSlopeTime[INDEX_VALUE]/10000;
+				stepMotoSlope_speed = stepMotoSlope*inc;
 			}
 			else if(stepMotoSlope>(stepMotoSlope_set-index_k))
 			{
-				stepMotoSlope_speed = stepMotoSpeed*(stepMotoSlope_set-stepMotoSlope)*Setting.SettingStruct.stepMotoSlopeTime[INDEX_VALUE]/10000;
+				stepMotoSlope_speed = (stepMotoSlope_set-stepMotoSlope)*inc;
 			}
 			else
 			{

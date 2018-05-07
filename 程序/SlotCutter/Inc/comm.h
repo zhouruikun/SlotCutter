@@ -16,9 +16,6 @@
 #define STATUS_LED_STANDBY 4
 
 #define STATUS_MOTO_TEST 5
-#define STATUS_MOTO_IDLE 6
-#define STATUS_MOTO_RUN 7
-
 #define STATUS_MOTO_ERR 8
 #define STATUS_MOTO_INIT 9
 #define STATUS_MOTO_STOP 10
@@ -27,31 +24,31 @@
 #define STATUS_MOTO_RUN_MODE2 13
 #define STATUS_MOTO_RUN_MODE3 14
 #define STATUS_MOTO_OUT 15	
-#define STATUS_MOTO_RUN_MODE4 16
+#define STATUS_MOTO_RUN_MODE0 16
+#define STATUS_FOOTER 17
 #define STANDBY_TIME 100
 
+ 
 typedef struct {
- 
-
-	uint16_t diameter[5];
-	uint16_t slotNumber[5];
-	uint16_t micaWidth[5];
-	uint16_t percentOfPassPreCut[5];
-	uint16_t motoCompensation[5];
-	uint16_t millingMethod[5];
-	uint16_t motoDirection[5];
-	uint16_t feedOnTime[5];
-	uint16_t percentOfPassOnCut[5];
-	uint16_t footerOnTime[5];
-	uint16_t feedOffTime[5];
-	uint16_t plusNumberOfMoto[5];
-	uint16_t mode0DirSwitchTime[5];
-	uint16_t stepMotoInitSpeed[5];
-	uint16_t stepMotoRunSpeed[5];	
-	uint16_t compareThreshold[5];
-	uint16_t stepMotoFinishTime[5];
-	uint16_t micaPreTrace[5];
- 
+	uint16_t diameter[5];//0
+	uint16_t slotNumber[5];//1
+	uint16_t micaWidth[5];//2
+	uint16_t percentOfPassPreCut[5];//3
+	uint16_t motoCompensation[5];//4
+	uint16_t millingMethod[5];//5
+	uint16_t motoDirection[5];//6
+	uint16_t feedOnTime[5];//7
+	uint16_t percentOfPassOnCut[5];//8
+	uint16_t footerOffTime[5];//09
+	uint16_t footerOnTime[5];//a
+	uint16_t plusNumberOfMoto[5];//b
+	uint16_t mode0DirSwitchTime[5];//c
+	uint16_t stepMotoInitSpeed[5];//d
+	uint16_t stepMotoRunSpeed[5];	//e
+	uint16_t compareThreshold[5];//f
+	uint16_t stepMotoFinishTime[5];//g
+	uint16_t micaPreTrace[5];//h
+  uint16_t footerExitTime[5];//i
 }SettingType;
 union SettingUnion{
 	SettingType SettingStruct;

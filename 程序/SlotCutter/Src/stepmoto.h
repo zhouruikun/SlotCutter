@@ -4,7 +4,7 @@
  //	www.51c51.net 0531-85817017 
 #include "main.h"
 #include "stm32f1xx_hal.h"
-void runMoto(uint32_t Pluse);
+void runMoto(uint32_t Pluse,uint32_t slope , uint8_t dir);
 void startMoto(uint32_t Pluse,uint32_t slope , uint8_t dir);
 uint32_t stopMoto();
 void setMotoDir(uint16_t dir);
