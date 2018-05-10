@@ -113,7 +113,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = CCD_Input_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(CCD_Input_GPIO_Port, &GPIO_InitStruct);
 
@@ -159,13 +159,7 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
-void motoDir(uint16_t dir)
-{
-	if(dir)
-		HAL_GPIO_WritePin(Step_Motor_Dir_GPIO_Port,Step_Motor_Dir_Pin,GPIO_PIN_SET);
-	else
-			HAL_GPIO_WritePin(Step_Motor_Dir_GPIO_Port,Step_Motor_Dir_Pin,GPIO_PIN_RESET);
-}
+
 
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -175,6 +169,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		{
 			xSemaphoreGiveFromISR(Key_KeyTask_BinaryHandle,NULL);
 			xSemaphoreGiveFromISR(Key_Sensor_BinaryHandle,NULL);
+			test_flag=1;
 		}
 	
 }

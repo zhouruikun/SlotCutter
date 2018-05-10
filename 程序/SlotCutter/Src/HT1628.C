@@ -94,6 +94,7 @@ sendcmddata(lum);
 //	return KEY_NULL;
 uint8_t checkKey(uint16_t keyNum)
 {
+
 	switch(keyNum)
 	{
 		case Key_START:
@@ -103,7 +104,7 @@ uint8_t checkKey(uint16_t keyNum)
 								return 0;
 			 
 		case Key_STOP:
-					if((keyBuff[2]&0x08)==0x08)
+					if((keyBuff[2])==0x08)
 					{
 						pause_flag=1;return 1;
 					}

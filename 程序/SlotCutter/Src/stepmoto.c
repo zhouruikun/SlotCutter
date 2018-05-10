@@ -7,19 +7,37 @@ uint32_t stepMotoPluse;
 uint32_t stepMotoSlope;
 uint32_t stepMotoSlope_set;
 uint32_t stepMotoSlope_speed;
+uint32_t stepMotoPluse_has;
 uint32_t get_moto_pluse(void)
 {
 	return stepMotoPluse/2;
+}
+uint32_t get_moto_pluse_has(void)
+{
+	return stepMotoPluse_has/2;
 }
 
 void runMoto(uint32_t Pluse,uint32_t slope , uint8_t dir)
 {
 //电机启动 Pluse脉冲   ，slope 斜率 dir  方向
   startMoto(  Pluse,  slope ,  dir);
-	while(stepMotoPluse!=0)
+	while(stepMotoPluse/2!=0)
 	{
 		osDelay(1);
 	}
+ 
+}
+void set_slope(uint32_t slope)
+{
+ 
+	
+		stepMotoSlope=0;
+		stepMotoSlope_set = slope-1;
+		if(stepMotoPluse<stepMotoSlope_set)
+			{
+				stepMotoSlope_set=stepMotoPluse;
+			}
+		stepMotoSlope_set=stepMotoSlope_set*2+1;
 }
 void continueMoto(void)
 {
@@ -30,7 +48,7 @@ void startMoto(uint32_t Pluse,uint32_t slope , uint8_t dir)
 {
 
 
-   
+  stepMotoPluse_has=0;
 	if(dir){
 		setMotoDir(Setting.SettingStruct.motoDirection[INDEX_VALUE]);
 	}
@@ -96,8 +114,12 @@ void speedCal(void)
 	uint32_t index_k =30;
 	
 	
-	 uint32_t inc = 1000000/Setting.SettingStruct.stepMotoInitSpeed[INDEX_VALUE]-1000000/Setting.SettingStruct.stepMotoRunSpeed[INDEX_VALUE];
-	
+		int32_t inc = 1000000/Setting.SettingStruct.stepMotoInitSpeed[INDEX_VALUE]-1000000/Setting.SettingStruct.stepMotoRunSpeed[INDEX_VALUE];
+	if(inc<0)
+	{
+		stepMotoSlope_speed =0;
+		return ;
+	}
 		inc/=index_k;
 		if(stepMotoSlope_set/2<index_k)
 			{
@@ -144,6 +166,7 @@ void speedCal(void)
 		if(stepMotoPluse<UINT32_MAX)
 		{
 			stepMotoPluse--;
+			stepMotoPluse_has++;
 		}
 		
 	}

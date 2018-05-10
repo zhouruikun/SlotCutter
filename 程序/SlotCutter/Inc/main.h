@@ -87,7 +87,6 @@
 #define Step_Motor_Dir_GPIO_Port GPIOB
 #define CCD_Input_Pin GPIO_PIN_12
 #define CCD_Input_GPIO_Port GPIOB
-#define CCD_Input_EXTI_IRQn EXTI15_10_IRQn
 #define TM1628_DIO_Pin GPIO_PIN_13
 #define TM1628_DIO_GPIO_Port GPIOB
 #define TM1628_CLK_Pin GPIO_PIN_14

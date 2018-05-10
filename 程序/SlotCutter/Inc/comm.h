@@ -39,7 +39,7 @@ typedef struct {
 	uint16_t motoDirection[5];//6
 	uint16_t feedOnTime[5];//7
 	uint16_t percentOfPassOnCut[5];//8
-	uint16_t footerOffTime[5];//09
+	uint16_t footerDelayExitTime[5];//09
 	uint16_t footerOnTime[5];//a
 	uint16_t plusNumberOfMoto[5];//b
 	uint16_t mode0DirSwitchTime[5];//c
@@ -54,6 +54,7 @@ union SettingUnion{
 	SettingType SettingStruct;
 	uint16_t SettingArray[16][5];
 };
+ extern uint8_t test_flag, test_plus;;
 extern uint8_t ledTaskStatus ,step,slot_count;
 extern uint8_t pause_flag;
 extern osSemaphoreId Key_KeyTask_BinaryHandle;
