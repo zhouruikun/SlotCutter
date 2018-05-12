@@ -497,10 +497,10 @@ ARM Macro Assembler    Page 8
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=slotcutter\startup_stm32f103xb.d -oslotcutter\startup_stm32f103xb.
-o -I..\Inc -I..\\Inc -I.\RTE\_SlotCutter -I"H:\Program Files\Keil_v5\ARM\PACK\A
-RM\CMSIS\5.0.1\CMSIS\Include" -I"H:\Program Files\Keil_v5\ARM\PACK\Keil\STM32F1
-xx_DFP\2.2.0\Device\Include" --predefine="__MICROLIB SETA 1" --predefine="__UVI
-SION_VERSION SETA 524" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SET
+o -I..\Inc -I..\\Inc -IE:\工程\硬件类\铣槽机\程序\SlotCutter\MDK-ARM\RTE -Id:\K
+eil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -Id:\Keil_v5\ARM\PACK\Keil\STM32F
+1xx_DFP\2.2.0\Device\Include --predefine="__MICROLIB SETA 1" --predefine="__UVI
+SION_VERSION SETA 518" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SET
 A 1" --list=startup_stm32f103xb.lst startup_stm32f103xb.s
 
 

@@ -88,6 +88,7 @@ uint8_t backTask1Finish=0;
 float per_pluse= 0.0;
 uint8_t backTask2Finish=0;
 uint8_t footer_flag=0;
+uint8_t  feed_flag=0;
 	uint8_t slot_count=0;
 /* USER CODE END Variables */
 
@@ -187,7 +188,7 @@ void StartLEDTask(void const * argument)
 	uint8_t showIndex = 0;
 	uint8_t lightFlag = 0;
 
-	uint16_t temp_i = 0,temp_j = 0;
+	uint16_t temp_i = 0,temp_j_feed=0,temp_j = 0;
 	uint32_t width = 0;
   
 	lint_val_display();
@@ -284,7 +285,7 @@ void StartLEDTask(void const * argument)
 							footer_flag =1;
 							HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);
 							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_SET);//	Î²¶¥×óÒÆ¶¯(A5Ê¹ÄÜ£¬A4ÊÍ·Å)
-							osDelay(Setting.SettingStruct.footerExitTime[INDEX_VALUE]*100);
+							osDelay(Setting.SettingStruct.footerOnTime[INDEX_VALUE]*100);
 							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);					
 						}
 						else
@@ -357,12 +358,12 @@ void StartLEDTask(void const * argument)
 							{
 								if(Setting.SettingStruct.compareThreshold[INDEX_VALUE]>=50)
 								{
-										HT1621_dis_num(0,18);
+										HT1621_dis_num(0,SMG_NONE);
 										HT1621_dis_float(Setting.SettingStruct.compareThreshold[INDEX_VALUE]-50,1,Setting.SettingStruct.compareThreshold[INDEX_SIZE],Setting.SettingStruct.compareThreshold[INDEX_POINT]);
 								}
 								else
 								{
-										HT1621_dis_num(0,19);
+										HT1621_dis_num(0,SMG_NEG);
 										HT1621_dis_float(50 - Setting.SettingStruct.compareThreshold[INDEX_VALUE],1,Setting.SettingStruct.compareThreshold[INDEX_SIZE],Setting.SettingStruct.compareThreshold[INDEX_POINT]);
 								}
 							}
@@ -370,13 +371,12 @@ void StartLEDTask(void const * argument)
 							{
 									HT1621_dis_float(Setting.SettingArray[funcNum][INDEX_VALUE],0,Setting.SettingArray[funcNum][INDEX_SIZE],Setting.SettingArray[funcNum][INDEX_POINT]);
 							}
-							 
 							if(lightFlag == 0)
 							{
 								if(funcNum == 0x0f)
-									HT1621_dis_num(showIndex+1,18);
+									HT1621_dis_num(showIndex+1,SMG_NONE);
 								else
-									HT1621_dis_num(showIndex,18);
+									HT1621_dis_num(showIndex,SMG_NONE);
 								lightFlag = 1;
 							}
 							else
@@ -396,7 +396,7 @@ void StartLEDTask(void const * argument)
 						}
 							osDelay(Setting.SettingStruct.footerOnTime[INDEX_VALUE]*100);
 							{
-								HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);
+							 
 								//ÔÝÍ£ÅÐ¶Ï
 								if(pause_flag == 1)
 								{
@@ -513,27 +513,22 @@ void StartLEDTask(void const * argument)
 														HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//Ï³µ¶Æø¸×ÓÒÒÆÇÐ¸î£¨B10Ê¹ÄÜ£¬B1ÊÍ·Å£©
 														if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){break;};//Ï³µ¶ÊÇ·ñµ½ÓÒ¶Ë£¨A10£©
-														//ÊÇ·ñÊÇ×îºóÒ»ÌõÔÆÄ¸
-														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);
+														HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
+														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
+														if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©
+														HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 													}
 													else{
 														HT1621_dis_point(5,1);	
 														osDelay(300);
 													}
 													HT1621_dis_float(Setting.SettingStruct.slotNumber[INDEX_VALUE]-slot_count,0,3,0);	display();		
-													if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])
+													if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])						//ÊÇ·ñÊÇ×îºóÒ»ÌõÔÆÄ¸
 															{//ÊÇ
 																	ledTaskStatus = STATUS_MOTO_OUT;
 															}
 															else{
-																//²»ÊÇ
-																if(test_flag==0)
-																{
-																	HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-																	HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
-																	if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©
-																	HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-																}
+
 																//ÕÒÏÂ½µÑØ
 
 																startMoto(INT32_MAX-1,mica,1);
@@ -667,27 +662,23 @@ void StartLEDTask(void const * argument)
 										HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//Ï³µ¶Æø¸×ÓÒÒÆÇÐ¸î£¨B10Ê¹ÄÜ£¬B1ÊÍ·Å£©
 										if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){break;};//Ï³µ¶ÊÇ·ñµ½ÓÒ¶Ë£¨A10£©
-										//ÊÇ·ñÊÇ×îºóÒ»ÌõÔÆÄ¸
-										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);
+										HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
+										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
+										if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©
+										HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);										
 									}
 									else{
 										HT1621_dis_point(5,1);	
 										osDelay(300);
 									}
 										
-									if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])
+									if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])										//ÊÇ·ñÊÇ×îºóÒ»ÌõÔÆÄ¸
 											{//ÊÇ
 													ledTaskStatus = STATUS_MOTO_OUT;
 											}
 											else{
 												//²»ÊÇ
-												if(test_flag==0)
-												{
-													HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-													HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
-													if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©
-													HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-												}
+
 													startMoto(INT32_MAX-1,cu,1);
 													if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñ¼ì²âÍ­Æ¬(B12)
 													//ÕÒÉÏÉýÑØ
@@ -797,23 +788,16 @@ void StartLEDTask(void const * argument)
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//Ï³µ¶Æø¸×ÓÒÒÆÇÐ¸î£¨B10Ê¹ÄÜ£¬B1ÊÍ·Å£©
 											if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){break;};//Ï³µ¶ÊÇ·ñµ½ÓÒ¶Ë£¨A10£©
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);
+											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
+											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
+											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©			
+											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 										}
 										else
 										{
 											HT1621_dis_point(5,1);	
 											osDelay(300);
 										}
- 
-
-											//²»ÊÇ
-										if(test_flag==0)
-										{
-											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
-											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©			
-											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-										} 
 										set_slope((uint32_t)per_pluse);
 									  continueMoto();	
 										slot_count++;
@@ -866,21 +850,17 @@ void StartLEDTask(void const * argument)
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//Ï³µ¶Æø¸×ÓÒÒÆÇÐ¸î£¨B10Ê¹ÄÜ£¬B1ÊÍ·Å£©
 											if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){break;}//Ï³µ¶ÊÇ·ñµ½ÓÒ¶Ë£¨A10£©
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);
+											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
+											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
+											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©
+											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);		
 										}
 										else
 										{
 											HT1621_dis_point(5,1);	
 											osDelay(300);
 										}
-											//²»ÊÇ
-										if(test_flag==0)
-										{
-											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//Ï³µ¶Æø¸××óÒÆ¶¯(B10ÊÍ·Å£¬B1Ê¹ÄÜ)
-											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){break;};//ÊÇ·ñµ½´ïÖÐ£¨A9£©
-											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);							
-										}
+
 											set_slope((uint32_t)per_pluse);
 										continueMoto();
 										slot_count++;
@@ -903,7 +883,7 @@ void StartLEDTask(void const * argument)
 								break;
 							}
  
-							HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_SET);	//ÍËÁÏÆø¸×ÓÒÒÆ£¨A0Ê¹ÄÜ£©
+							feed_flag = 0;
 							backTask1Finish=0;
 							backTask2Finish=0;
 							while(backTask1Finish!=1 || backTask2Finish!=1)
@@ -917,19 +897,28 @@ void StartLEDTask(void const * argument)
 								if(footer_flag==0)
 								{
 									temp_j++;
-									if(temp_j==Setting.SettingStruct.footerDelayExitTime[INDEX_VALUE]*10)
+									if(temp_j==Setting.SettingStruct.footerExitTime[INDEX_VALUE]*10)
 									{
 									  HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);//A4ÊÍ·Å
 										backTask1Finish=1;
 									}
 								}
 								
-								if(temp_i==Setting.SettingStruct.feedOnTime[INDEX_VALUE])
+								
+								if(temp_i == Setting.SettingStruct.feedOnDelayTime[INDEX_VALUE])
 								{
-									HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);//ÍËÁÏÆø¸××óÒÆ£¨A0ÊÍ·Å£				
-										backTask2Finish=1;									
+									feed_flag =1;
+									HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_SET);	//ÍËÁÏÆø¸×ÓÒÒÆ£¨A0Ê¹ÄÜ£©
 								}
-								 
+								if(feed_flag ==1 )
+								{
+									temp_j_feed++;
+									if(temp_j_feed==Setting.SettingStruct.feedOnTime[INDEX_VALUE])
+										{
+											HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);//ÍËÁÏÆø¸××óÒÆ£¨A0ÊÍ·Å?			
+											backTask2Finish=1;									
+										}
+								}
 								osDelay(10);
 								temp_i++;
 							}
@@ -1235,6 +1224,7 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 				Setting.SettingStruct.millingMethod[INDEX_VALUE] = 0;Setting.SettingStruct.millingMethod[INDEX_POINT] = 0;
 				Setting.SettingStruct.motoDirection[INDEX_VALUE] = 0;Setting.SettingStruct.motoDirection[INDEX_POINT] = 0;
 				Setting.SettingStruct.feedOnTime[INDEX_VALUE] = 1;Setting.SettingStruct.feedOnTime[INDEX_POINT] = 2;
+				Setting.SettingStruct.feedOnDelayTime[INDEX_VALUE] = 1;Setting.SettingStruct.feedOnDelayTime[INDEX_POINT] = 2;
 				Setting.SettingStruct.percentOfPassOnCut[INDEX_VALUE] = 150;Setting.SettingStruct.percentOfPassOnCut[INDEX_POINT] = 0;
 				Setting.SettingStruct.footerOnTime[INDEX_VALUE] = 1;Setting.SettingStruct.footerOnTime[INDEX_POINT] = 1;
 				Setting.SettingStruct.footerDelayExitTime[INDEX_VALUE] = 1;Setting.SettingStruct.footerDelayExitTime[INDEX_POINT] = 1;
@@ -1255,6 +1245,7 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 				Setting.SettingStruct.millingMethod[INDEX_MAX] = 3;Setting.SettingStruct.millingMethod[INDEX_MIN] = 0;
 				Setting.SettingStruct.motoDirection[INDEX_MAX] = 1;Setting.SettingStruct.motoDirection[INDEX_MIN] = 0;
 				Setting.SettingStruct.feedOnTime[INDEX_MAX] = 900;Setting.SettingStruct.feedOnTime[INDEX_MIN] = 1;
+				Setting.SettingStruct.feedOnDelayTime[INDEX_MAX] = 900;Setting.SettingStruct.feedOnDelayTime[INDEX_MIN] = 1;
 				Setting.SettingStruct.percentOfPassOnCut[INDEX_MAX] = 200;Setting.SettingStruct.percentOfPassOnCut[INDEX_MIN] = 0;
 				Setting.SettingStruct.footerOnTime[INDEX_MAX] = 900;Setting.SettingStruct.footerOnTime[INDEX_MIN] = 1;
 				Setting.SettingStruct.footerDelayExitTime[INDEX_MAX] = 900;Setting.SettingStruct.footerDelayExitTime[INDEX_MIN] = 1;
@@ -1274,6 +1265,7 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 				Setting.SettingStruct.millingMethod[INDEX_SIZE] = 1; 
 				Setting.SettingStruct.motoDirection[INDEX_SIZE] = 1; 
 				Setting.SettingStruct.feedOnTime[INDEX_SIZE] = 3; 
+				Setting.SettingStruct.feedOnDelayTime[INDEX_SIZE] = 3;
 				Setting.SettingStruct.percentOfPassOnCut[INDEX_SIZE] = 3; 
 				Setting.SettingStruct.footerOnTime[INDEX_SIZE] = 2; 
 				Setting.SettingStruct.footerDelayExitTime[INDEX_SIZE] = 2; 

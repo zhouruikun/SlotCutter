@@ -27,7 +27,9 @@
 #define STATUS_MOTO_RUN_MODE0 16
 #define STATUS_FOOTER 17
 #define STANDBY_TIME 100
+#define SMG_NONE 19
 
+#define SMG_NEG 20
  
 typedef struct {
 	uint16_t diameter[5];//0
@@ -49,6 +51,7 @@ typedef struct {
 	uint16_t stepMotoFinishTime[5];//g
 	uint16_t micaPreTrace[5];//h
   uint16_t footerExitTime[5];//i
+	uint16_t feedOnDelayTime[5];//j
 }SettingType;
 union SettingUnion{
 	SettingType SettingStruct;
