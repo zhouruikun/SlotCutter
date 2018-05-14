@@ -308,7 +308,7 @@ void StartLEDTask(void const * argument)
 										case Key_START:
 											funcNum++;
 											showIndex = 0;
-											if(funcNum>=18)
+											if(funcNum>=20)
 											{
 												funcNum = 0;
 											}
@@ -531,7 +531,7 @@ void StartLEDTask(void const * argument)
 
 																//’“œ¬Ωµ—ÿ
 
-																startMoto(INT32_MAX-1,mica,1);
+																startMoto(INT32_MAX-1,0,1);
 																wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET);// «∑ÒºÏÕ≠∆¨(B12)
 																mica = INT32_MAX-1-stopMoto();	
 																												
@@ -679,7 +679,7 @@ void StartLEDTask(void const * argument)
 											else{
 												//≤ª «
 
-													startMoto(INT32_MAX-1,cu,1);
+													startMoto(INT32_MAX-1,0,1);
 													if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){break;};// «∑ÒºÏ≤‚Õ≠∆¨(B12)
 													//’“…œ…˝—ÿ
 													startMoto(INT32_MAX-1,cu,1);
@@ -688,7 +688,7 @@ void StartLEDTask(void const * argument)
 													cu = INT32_MAX-1-stopMoto();
 													
 													//’“œ¬Ωµ—ÿ
-													startMoto(INT32_MAX-1,mica,1);
+													startMoto(INT32_MAX-1,0,1);
 													while(HAL_GPIO_ReadPin(CCD_Input_GPIO_Port,CCD_Input_Pin)!=GPIO_PIN_RESET)
 													{
 														osDelay(1);
@@ -803,6 +803,8 @@ void StartLEDTask(void const * argument)
 										slot_count++;
 										while((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]-get_moto_pluse())<per_pluse*slot_count)
 										{
+											if(get_moto_pluse())
+												break;
 											osDelay(1);
 										}
 								
@@ -864,8 +866,10 @@ void StartLEDTask(void const * argument)
 											set_slope((uint32_t)per_pluse);
 										continueMoto();
 										slot_count++;
-										while((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]-get_moto_pluse())<per_pluse*slot_count)
+										while((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]-get_moto_pluse())<=per_pluse*slot_count)
 										{
+											if(get_moto_pluse())
+												break;
 											osDelay(1);
 										}
 										stopMoto();

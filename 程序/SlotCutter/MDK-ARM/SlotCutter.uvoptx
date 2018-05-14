@@ -144,7 +144,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>/</Name>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -181,18 +181,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>953</LineNumber>
+          <LineNumber>869</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134231406</Address>
+          <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>C:\Users\Administrator\Desktop\SlotCutter\绋嬪簭\SlotCutter\Src\freertos.c</Filename>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>../Src/freertos.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\SlotCutter\../Src/freertos.c\953</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -243,7 +243,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
