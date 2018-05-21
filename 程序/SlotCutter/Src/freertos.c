@@ -106,7 +106,7 @@ void backTake2(void const * argument);
 
 void para_to_set(void);
 void arg_read(void);
-	//增加一个数字位
+	//???????
 	uint16_t decNumBit(uint16_t num,uint8_t bit);
 	uint16_t incNumBit(uint16_t num,uint8_t bit);
 	uint8_t wait_input(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState);
@@ -230,14 +230,14 @@ void StartLEDTask(void const * argument)
 							}
 							if(keyGet.key == Key_START && keyGet.status == KEY_UP)
 							{
-								//测试模式
+								//????
 								 HT1621_dis_point(5,1);	display();
 								 while(1)
 								 {
 									 xQueueReceive( led_key_queue,&keyGet,portMAX_DELAY);
 									 if(keyGet.key == Key_FUN && keyGet.status == KEY_UP)
 										{
-											//进入测试模式2
+											//??????2
 											test_flag = 1;
 											 switch(Setting.SettingStruct.millingMethod[INDEX_VALUE])
 											 {
@@ -258,7 +258,7 @@ void StartLEDTask(void const * argument)
 										}
 										if(keyGet.key == Key_R && keyGet.status == KEY_UP)
 										{
-											//进入测试模式1
+											//??????1
 											slot_count =0;
 											pause_flag=0;
 											ledTaskStatus = STATUS_MOTO_TEST2;
@@ -284,7 +284,7 @@ void StartLEDTask(void const * argument)
 						{
 							footer_flag =1;
 							HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);
-							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_SET);//	尾顶左移动(A5使能，A4释放)
+							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_SET);//	?????(A5??,A4??)
 							osDelay(Setting.SettingStruct.footerOnTime[INDEX_VALUE]*100);
 							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);					
 						}
@@ -292,7 +292,7 @@ void StartLEDTask(void const * argument)
 						{
 							footer_flag=0;
 							HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_SET);
-							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);//	尾顶退出(A4使能，A5释放)
+							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);//	????(A4??,A5??)
 							osDelay(Setting.SettingStruct.footerExitTime[INDEX_VALUE]*100);
 							HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);			
 						}
@@ -346,6 +346,8 @@ void StartLEDTask(void const * argument)
 											break;
 										case Key_STOP:
 													ledTaskStatus = STATUS_LED_INIT;
+													Setting.SettingStruct.micaPreTrace[INDEX_MAX] = (Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]/Setting.SettingStruct.slotNumber[INDEX_VALUE])-
+														Setting.SettingStruct.micaWidth[INDEX_VALUE];										
 													STMFLASH_Write( FLASH_BASE+60*1024, (uint16_t *) &Setting, sizeof(Setting)/2 ); 
 													para_to_set();
 												break;
@@ -354,7 +356,7 @@ void StartLEDTask(void const * argument)
 							}
 							clear();
 							HT1621_dis_num(5,funcNum);
-							if(funcNum == 0x0f)//电压比较是正负的
+							if(funcNum == 0x0f)//????????
 							{
 								if(Setting.SettingStruct.compareThreshold[INDEX_VALUE]>=50)
 								{
@@ -389,16 +391,17 @@ void StartLEDTask(void const * argument)
 						 pause_flag=0;
 						 slot_count=0;
 							stop_flag=0;
-					if(footer_flag==0)
-						{
-						 footer_flag=1;
-						 HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);
-						 HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_SET);//	尾顶左移动(A5使能，A4释放)
-						}
+						HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);//(B10ê§?ü??B1ê1?ü)
+						if(footer_flag==0)
+							{
+							 footer_flag=1;
+							 HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);
+							 HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_SET);//	?????(A5??,A4??)
+							}
 							osDelay(Setting.SettingStruct.footerOnTime[INDEX_VALUE]*100);
 							{
 							 
-								//暂停判断
+								//????
 								if(pause_flag == 1)
 								{
 								  osDelay(100);
@@ -411,8 +414,8 @@ void StartLEDTask(void const * argument)
 											}
 									}
 								}
-								//暂停判断结束		
-								//osDelay(Setting.SettingStruct.feedDelayTime[INDEX_VALUE]*10);//根据设定时间延时
+								//??????		
+								//osDelay(Setting.SettingStruct.feedDelayTime[INDEX_VALUE]*10);//????????
 							 switch(Setting.SettingStruct.millingMethod[INDEX_VALUE])
 							 {
 								 case 0:ledTaskStatus = STATUS_MOTO_RUN_MODE0;
@@ -432,17 +435,17 @@ void StartLEDTask(void const * argument)
 										mica=0;
 										cu=0;
 										startMoto(65534,0,1);
-										if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//是否检测云母(B12)
+										if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//??????(B12)
 										if(test_flag==0)
 										{
 										 for(temp_i = 0 ,slot_count=0;slot_count<Setting.SettingStruct.slotNumber[INDEX_VALUE];slot_count++)
 											{
 												startMoto(65534,0,1);
-												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//是否检测铜片(B12)
+												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//??????(B12)
 												width = (65534-stopMoto());
 												startMoto(65534,0,1);
-												while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//云母提前检测
-												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//是否检测云母(B12)								
+												while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//??????
+												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//??????(B12)								
 
 												 if(check_pass_preCut(width)!=1)
 													{
@@ -456,7 +459,7 @@ void StartLEDTask(void const * argument)
 																break;
 														}
 													}
-												//暂停判断
+												//????
 												if(pause_flag == 1)
 												{
 													osDelay(100);
@@ -470,7 +473,7 @@ void StartLEDTask(void const * argument)
 														
 													}
 												}
-												//暂停判断结束		
+												//??????		
 											}
 											if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])
 											{
@@ -481,7 +484,7 @@ void StartLEDTask(void const * argument)
 										}			
 											slot_count =0 ;										
 											cut_nextmode4:
-											//暂停判断
+											//????
 											if(pause_flag == 1)
 												{
 													osDelay(100);
@@ -499,24 +502,24 @@ void StartLEDTask(void const * argument)
 														}	
 													}
 												}
-												//暂停判断结束	
+												//??????	
 						 
 										
 										HT1621_dis_float((uint32_t)absi(mica-mica_last) *100/(mica),3,3,0);mica_last = mica;	
-												//云母是否合格
+												//??????
 											if(check_pass_onCut(width)==1)
 												{
-													//是
-													//补偿脉冲
-												 	runMoto(Setting.SettingStruct.motoCompensation[INDEX_VALUE],0,1);//步进电机运行(B0)
+													//?
+													//????
+												 	runMoto(Setting.SettingStruct.motoCompensation[INDEX_VALUE],0,1);//??????(B0)
 													if(test_flag==0)
 													{
 														HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//铣刀气缸右移切割（B10使能，B1释放）
-														if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;};//铣刀是否到右端（A10）
+														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//????????(B10??,B1??)
+														if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;};//???????(A10)
 														HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//铣刀气缸左移动(B10释放，B1使能)
-														if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//是否到达中（A9）
+														HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//???????(B10??,B1??)
+														if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//?????(A9)
 														HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 													}
 													else{
@@ -524,21 +527,22 @@ void StartLEDTask(void const * argument)
 														osDelay(300);
 													}
 													HT1621_dis_float(Setting.SettingStruct.slotNumber[INDEX_VALUE]-slot_count,0,3,0);	display();		
-													if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])						//是否是最后一条云母
-															{//是
+													if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])						//?????????
+															{//?
 																	ledTaskStatus = STATUS_MOTO_OUT;
 															}
 															else{
 
-																//找下降沿
+																//????
 
 																startMoto(INT32_MAX-1,0,1);
-																if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};;//是否检铜片(B12)
+																if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};;//?????(B12)
 																mica = INT32_MAX-1-stopMoto();	
 																												
-																//找上升沿
+																//????
 																	startMoto(INT32_MAX-1,cu,1);
-																	while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//云母提前检测
+																	while(get_moto_pluse_has()<((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]/Setting.SettingStruct.slotNumber[INDEX_VALUE])-
+																		Setting.SettingStruct.micaWidth[INDEX_VALUE]-Setting.SettingStruct.micaPreTrace[INDEX_VALUE])){osDelay(1);};//??????
 																while(HAL_GPIO_ReadPin(CCD_Input_GPIO_Port,CCD_Input_Pin)!=GPIO_PIN_SET)
 																{
 																	osDelay(1);
@@ -569,7 +573,7 @@ void StartLEDTask(void const * argument)
 												
 												}
 												else{
-															//不合格
+															//???
 															stopMoto();
 															ledTaskStatus = STATUS_MOTO_ERR;
 													}											
@@ -579,16 +583,16 @@ void StartLEDTask(void const * argument)
 									mica=0;
 									cu=0;
 									startMoto(65534,0,1);
-									if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//是否检测铜片(B12)
+									if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//??????(B12)
 									if(test_flag==0)
 										{
 										 for(temp_i = 0 ,slot_count=0;slot_count<Setting.SettingStruct.slotNumber[INDEX_VALUE];slot_count++)
 											{
 												startMoto(65534,0,1);
-												while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//云母提前检测		
-												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//是否检测云母(B12)								
+												while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//??????		
+												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//??????(B12)								
 												startMoto(65534,0,1);
-												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//是否检测铜片(B12)
+												if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//??????(B12)
 												width = (65534-stopMoto());
 												 if(check_pass_preCut(width)!=1)
 													{
@@ -602,7 +606,7 @@ void StartLEDTask(void const * argument)
 																break;
 														}
 													}
-												//暂停判断
+												//????
 												if(pause_flag == 1)
 												{
 													osDelay(100);
@@ -616,7 +620,7 @@ void StartLEDTask(void const * argument)
 														
 													}
 												}
-												//暂停判断结束		
+												//??????		
 											}
 											if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])
 											{
@@ -629,7 +633,7 @@ void StartLEDTask(void const * argument)
 										 
 										}						
 							cut_next:
-							//暂停判断
+							//????
 							if(pause_flag == 1)
 								{
 									osDelay(100);
@@ -647,25 +651,25 @@ void StartLEDTask(void const * argument)
 														}				
 									}
 								}
-								//暂停判断结束	
+								//??????	
 
 						
 						HT1621_dis_float((uint32_t)absi(mica-mica_last) *100/(mica),3,3,0);mica_last = mica;	
-								//云母是否合格
+								//??????
 							if(check_pass_onCut(width)==1)
 								{
-									//是
-									//往回走一半脉冲
+									//?
+									//???????
 									osDelay(Setting.SettingStruct.mode0DirSwitchTime[INDEX_VALUE]*10);
-									runMoto(width/2,0,0);//步进电机运行(B0)
+									runMoto(width/2,0,0);//??????(B0)
 									if(test_flag==0)
 									{
 										HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//铣刀气缸右移切割（B10使能，B1释放）
-										if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;};//铣刀是否到右端（A10）
+										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//????????(B10??,B1??)
+										if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;};//???????(A10)
 										HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//铣刀气缸左移动(B10释放，B1使能)
-										if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//是否到达中（A9）
+										HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//???????(B10??,B1??)
+										if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//?????(A9)
 										HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);										
 									}
 									else{
@@ -673,22 +677,23 @@ void StartLEDTask(void const * argument)
 										osDelay(300);
 									}
 										
-									if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])										//是否是最后一条云母
-											{//是
+									if(slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])										//?????????
+											{//?
 													ledTaskStatus = STATUS_MOTO_OUT;
 											}
 											else{
-												//不是
+												//??
 
 													startMoto(INT32_MAX-1,0,1);
-													if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//是否检测铜片(B12)
-													//找上升沿
+													if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};//??????(B12)
+													//????
 													startMoto(INT32_MAX-1,cu,1);
-													while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//云母提前检测	
-													if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//是否检测云母(B12)
+													while(get_moto_pluse_has()<((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]/Setting.SettingStruct.slotNumber[INDEX_VALUE])-
+														Setting.SettingStruct.micaWidth[INDEX_VALUE]-Setting.SettingStruct.micaPreTrace[INDEX_VALUE])){osDelay(1);};//??????
+													if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};//??????(B12)
 													cu = INT32_MAX-1-stopMoto();
 													
-													//找下降沿
+													//????
 													startMoto(INT32_MAX-1,0,1);
 													while(HAL_GPIO_ReadPin(CCD_Input_GPIO_Port,CCD_Input_Pin)!=GPIO_PIN_RESET)
 													{
@@ -724,22 +729,22 @@ void StartLEDTask(void const * argument)
 							
 								}
 								else{
-											//不合格
+											//???
 											stopMoto();
 											ledTaskStatus = STATUS_MOTO_ERR;
 									}											
 				break;
 							
 			case STATUS_MOTO_RUN_MODE3:
-							startMoto(65534,0,1);//步进电机运行(B0)
-							if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};;//是否检测铜片(B12)
-							startMoto(65534,0,1);//步进电机运行(B0)
-							while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//云母提前检测
-							if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};;//是否检测云母(B12)
-							startMoto(65534,0,1);//步进电机运行(B0)
-							if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};;//是否检测铜片(B12)
+							startMoto(65534,0,1);//??????(B0)
+							if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};;//??????(B12)
+							startMoto(65534,0,1);//??????(B0)
+							while(get_moto_pluse_has()<Setting.SettingStruct.micaPreTrace[INDEX_VALUE]){osDelay(1);};//??????
+							if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_SET)){goto status_start;};;//??????(B12)
+							startMoto(65534,0,1);//??????(B0)
+							if(wait_input(CCD_Input_GPIO_Port, CCD_Input_Pin, GPIO_PIN_RESET)){goto status_start;};;//??????(B12)
 							width = (65534-stopMoto());
-											//暂停判断
+											//????
 								if(pause_flag == 1)
 								{
 									osDelay(100);
@@ -752,19 +757,19 @@ void StartLEDTask(void const * argument)
 											}
 									}
 								}
-								//暂停判断结束		
-								//云母是否合格
+								//??????		
+								//??????
 							if(check_pass_onCut(width)==1)
 								{
-									//补偿脉冲
-									runMoto(Setting.SettingStruct.motoCompensation[INDEX_VALUE],0,1);//步进电机运行(B0)
+									//????
+									runMoto(Setting.SettingStruct.motoCompensation[INDEX_VALUE],0,1);//??????(B0)
 									slot_count =0;
 									per_pluse=(float)Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]/Setting.SettingStruct.slotNumber[INDEX_VALUE];
 								  startMoto(Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE],0,1);
 									stopMoto();
 									while(get_moto_pluse())
 									{
-										 //暂停判断
+										 //????
 										if(pause_flag == 1)
 										{
 											osDelay(100);
@@ -782,16 +787,16 @@ void StartLEDTask(void const * argument)
 														}
 											}
 										}
-										//暂停判断结束		
+										//??????		
 
 										if(test_flag==0)
 										{
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//铣刀气缸右移切割（B10使能，B1释放）
-											if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;};//铣刀是否到右端（A10）
+											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//????????(B10??,B1??)
+											if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;};//???????(A10)
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//铣刀气缸左移动(B10释放，B1使能)
-											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//是否到达中（A9）			
+											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//???????(B10??,B1??)
+											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//?????(A9)			
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 										}
 										else
@@ -804,7 +809,7 @@ void StartLEDTask(void const * argument)
 										slot_count++;
 										while((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]-get_moto_pluse())<per_pluse*slot_count)
 										{
-											if(get_moto_pluse()==0)
+											if(get_moto_pluse()==0||slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])
 												break;
 											osDelay(1);
 										}
@@ -817,7 +822,7 @@ void StartLEDTask(void const * argument)
 									
 								}
 							else
-								{	//不合格
+								{	//???
 									stopMoto();
 									ledTaskStatus = STATUS_MOTO_ERR;
 									}		
@@ -828,7 +833,7 @@ void StartLEDTask(void const * argument)
 									stopMoto();
 									while(get_moto_pluse())
 									{
-											//暂停判断
+											//????
 											if(pause_flag == 1)
 											{
 												osDelay(100);
@@ -846,16 +851,16 @@ void StartLEDTask(void const * argument)
 														}
 												}
 											}
-											//暂停判断结束									
+											//??????									
 
 										if(test_flag==0)
 										{
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//铣刀气缸右移切割（B10使能，B1释放）
-											if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;}//铣刀是否到右端（A10）
+											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_SET);//????????(B10??,B1??)
+											if(wait_input(Cutter_Sensor_End_GPIO_Port, Cutter_Sensor_End_Pin, GPIO_PIN_RESET)){goto status_start;}//???????(A10)
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//铣刀气缸左移动(B10释放，B1使能)
-											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//是否到达中（A9）
+											HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//???????(B10??,B1??)
+											if(wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET)){goto status_start;};//?????(A9)
 											HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);		
 										}
 										else
@@ -869,7 +874,7 @@ void StartLEDTask(void const * argument)
 										slot_count++;
 										while((Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]-get_moto_pluse())<=per_pluse*slot_count)
 										{
-											if(get_moto_pluse()==0)
+												if(get_moto_pluse()==0||slot_count == Setting.SettingStruct.slotNumber[INDEX_VALUE])
 												break;
 											osDelay(1);
 										}
@@ -888,9 +893,11 @@ void StartLEDTask(void const * argument)
 								ledTaskStatus = STATUS_LED_INIT;
 								break;
 							}
+							
 							HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
-							HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//铣刀气缸左移动(B10释放，B1使能)
-							wait_input(Cutter_Sensor_Start_GPIO_Port, Cutter_Sensor_Start_Pin, GPIO_PIN_RESET);//是否到达中（A8）			
+							HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//???????(B10??,B1??)
+							wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET);
+							wait_input(Cutter_Sensor_Start_GPIO_Port, Cutter_Sensor_Start_Pin, GPIO_PIN_RESET);//?????(A8)			
 							HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
 							temp_i = 0,temp_j_feed=0,temp_j = 0;
 							feed_flag = 0;
@@ -901,7 +908,7 @@ void StartLEDTask(void const * argument)
 								if(temp_i==Setting.SettingStruct.footerDelayExitTime[INDEX_VALUE]*10)
 								{	
 									HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_SET);
-									HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);//尾顶退（A4使能，A5释放）
+									HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);//???(A4??,A5??)
 									footer_flag=0;
 								}
 								if(footer_flag==0)
@@ -909,7 +916,7 @@ void StartLEDTask(void const * argument)
 									temp_j++;
 									if(temp_j==Setting.SettingStruct.footerExitTime[INDEX_VALUE]*10)
 									{
-									  HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);//A4释放
+									  HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);//A4??
 										backTask1Finish=1;
 									}
 								}
@@ -918,14 +925,14 @@ void StartLEDTask(void const * argument)
 								if(temp_i == Setting.SettingStruct.feedOnDelayTime[INDEX_VALUE])
 								{
 									feed_flag =1;
-									HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_SET);	//退料气缸右移（A0使能）
+									HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_SET);	//??????(A0??)
 								}
 								if(feed_flag ==1 )
 								{
 									temp_j_feed++;
 									if(temp_j_feed==Setting.SettingStruct.feedOnTime[INDEX_VALUE])
 										{
-											HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);//退料气缸左移（A0释放?			
+											HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);//??????(A0???			
 											backTask2Finish=1;									
 										}
 								}
@@ -950,29 +957,34 @@ void StartLEDTask(void const * argument)
 							
 					break;
 			case STATUS_MOTO_ERR:
-							//停机并显示E1
+							//?????E1
 							clear();
+							HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);	
+							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);	
+							HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);	
 							HT1621_dis_num(1,0x0e);HT1621_dis_num(2,1);display();
- 
-							while(1)
-							{
-								if(HAL_GPIO_ReadPin(Key_Stop_GPIO_Port,Key_Stop_Pin)==GPIO_PIN_RESET)
-								{
-									ledTaskStatus = STATUS_MOTO_OUT;
-									break;
-								}
-								osDelay(10);
-							}
-							
+							while(HAL_GPIO_ReadPin(Key_Stop_GPIO_Port,Key_Stop_Pin)==GPIO_PIN_SET);//???????(B6)
+							while(HAL_GPIO_ReadPin(Key_Stop_GPIO_Port,Key_Stop_Pin)==GPIO_PIN_RESET);//???????(B6)
+							HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_SET);
+							HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);//???????(B10??,B1??)
+							wait_input(Cutter_Sensor_Mid_GPIO_Port, Cutter_Sensor_Mid_Pin, GPIO_PIN_RESET);//(A9)	
+							wait_input(Cutter_Sensor_Start_GPIO_Port, Cutter_Sensor_Start_Pin, GPIO_PIN_RESET);//?????(A8)		
+							HAL_GPIO_WritePin(Cutter_Pull_GPIO_Port, Cutter_Pull_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(Cutter_Push_GPIO_Port, Cutter_Push_Pin, GPIO_PIN_RESET);			
+							HAL_GPIO_WritePin(Footer_Pull_GPIO_Port, Footer_Pull_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_SET);//???(A4??,A5??)
+							footer_flag =0 ;
+							osDelay(Setting.SettingStruct.footerExitTime[INDEX_VALUE]*100);	
+							HAL_GPIO_WritePin(Footer_Push_GPIO_Port, Footer_Push_Pin, GPIO_PIN_RESET);
 							HT1621_dis_float(Setting.SettingStruct.slotNumber[INDEX_VALUE],0,Setting.SettingStruct.slotNumber[INDEX_SIZE],Setting.SettingStruct.slotNumber[INDEX_POINT]);
 							HT1621_dis_float(Setting.SettingStruct.percentOfPassOnCut[INDEX_VALUE],3,Setting.SettingStruct.percentOfPassOnCut[INDEX_SIZE],Setting.SettingStruct.percentOfPassOnCut[INDEX_POINT]);
- 
+							ledTaskStatus = STATUS_LED_INIT;
 					break;
-			case STATUS_MOTO_TEST://扫描云母
+			case STATUS_MOTO_TEST://????
  
 				 	ledTaskStatus = STATUS_LED_INIT;
 				break;
-			case STATUS_MOTO_TEST2://一直运行
+			case STATUS_MOTO_TEST2://????
 			
 
 			fuck:	while(ledTaskStatus == STATUS_MOTO_TEST2)
@@ -980,10 +992,10 @@ void StartLEDTask(void const * argument)
 							pluse_last = Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE];
 							//runMoto(100,0,1);
 							startMoto(Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE],0,1);
-							while(get_moto_pluse()>0)//一圈
+							while(get_moto_pluse()>0)//??
 								{
 									
-									//找下降沿
+									//  ???
 									while( HAL_GPIO_ReadPin(CCD_Input_GPIO_Port,CCD_Input_Pin)!=GPIO_PIN_RESET )
 									{
 										if(get_moto_pluse()==0)
@@ -1014,7 +1026,7 @@ void StartLEDTask(void const * argument)
 									mica = pluse_last-get_moto_pluse();
 									pluse_last = get_moto_pluse();
 									osDelay(1);
-									//找上升沿
+									//????
 									while(HAL_GPIO_ReadPin(CCD_Input_GPIO_Port,CCD_Input_Pin)!=GPIO_PIN_SET)
 									{
 										if(get_moto_pluse()==0)
@@ -1104,7 +1116,7 @@ void StartStepMotoTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		//1ms计算一次速度偏执
+		//1ms????????
 	//	speedCal();
 		osDelay(1);
    }
@@ -1134,9 +1146,9 @@ void backTake2(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_SET);	//退料气缸右移（A0使能）
+		HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_SET);	//??????(A0??)
 		osDelay(Setting.SettingStruct.feedOnTime[INDEX_VALUE]*10);
-		HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);//退料气缸左移（A0释放）		
+		HAL_GPIO_WritePin(Material_R_Push_GPIO_Port, Material_R_Push_Pin, GPIO_PIN_RESET);//??????(A0??)		
 		backTask2Finish=1;
 		vTaskDelete(NULL);
    }
@@ -1147,7 +1159,7 @@ uint16_t absi(int16_t i)
 {
 	return i>0?i:-i;
 }
-//输入槽间距脉冲数 然后根据槽数和一圈脉冲数判断
+//???????? ??????????????
 uint8_t check_pass_preCut(uint16_t width)
 {
 	if(test_flag ==1)
@@ -1160,7 +1172,7 @@ uint8_t check_pass_preCut(uint16_t width)
 		return 0;
 	
 }
-//输入槽间距脉冲数 然后根据槽数和一圈脉冲数判断
+//???????? ??????????????
 uint8_t check_pass_onCut(uint16_t width)
 {
 	if(test_flag ==1)
@@ -1173,7 +1185,7 @@ uint8_t check_pass_onCut(uint16_t width)
 		return 0;
 	
 }
-//等待外部输入信号 如果是停机则返回1 如果是暂停则返回2 等待成功返回0
+//???????? ????????1 ????????2 ??????0
 uint8_t wait_input(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
 {
 	while(1)
@@ -1192,7 +1204,6 @@ uint8_t wait_input(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinStat
 						ledTaskStatus = STATUS_MOTO_OUT;
 						return 1;
 					}
-					
 				}	
 			if(HAL_GPIO_ReadPin(GPIOx,GPIO_Pin)==PinState)
 				{
@@ -1202,16 +1213,17 @@ uint8_t wait_input(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinStat
 	}
 }
 
-//设置参数到外设
+//???????
 void para_to_set(void)
 {
-	//速度
+	//??
 	setMotoSpeed(Setting.SettingStruct.stepMotoInitSpeed[INDEX_VALUE]);
-	//比较电压
+	//????
 	X9C103_Set(Setting.SettingStruct.compareThreshold[INDEX_VALUE]-50);
+ 
 }
 
-//增加一个数字位
+//???????
 uint16_t decNumBit(uint16_t num,uint8_t bit)
 {
 	uint16_t power = 1;
@@ -1225,7 +1237,7 @@ uint16_t decNumBit(uint16_t num,uint8_t bit)
 	else
 		return 0;
 }
-//增加一个数字位
+//???????
 uint16_t incNumBit(uint16_t num,uint8_t bit)
 {
 	uint16_t power = 1;
@@ -1236,11 +1248,11 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 	}
 	return num + power;
 }
-	//参数读出函数 如果第一次则初始化
+	//?????? ?????????
  
 	void arg_read(void)
 	{
-		STMFLASH_Read( FLASH_BASE+60*1024, (uint16_t *) &Setting, sizeof(Setting)/2 );           //从指定地址开始读出指定长度的数据	
+		STMFLASH_Read( FLASH_BASE+60*1024, (uint16_t *) &Setting, sizeof(Setting)/2 );           //????????????????	
 		if(Setting.SettingStruct.diameter[INDEX_VALUE]==0xffff)
 			{
 				Setting.SettingStruct.diameter[INDEX_VALUE] = 10;Setting.SettingStruct.diameter[INDEX_POINT] = 2;
@@ -1283,7 +1295,9 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 				Setting.SettingStruct.stepMotoRunSpeed[INDEX_MAX] = 65000;Setting.SettingStruct.stepMotoRunSpeed[INDEX_MIN] = 600;
 				Setting.SettingStruct.compareThreshold[INDEX_MAX] = 100;Setting.SettingStruct.compareThreshold[INDEX_MIN] = 0;
 				Setting.SettingStruct.stepMotoFinishTime[INDEX_MAX] = 65000;Setting.SettingStruct.stepMotoFinishTime[INDEX_MIN] = 0;
-				Setting.SettingStruct.micaPreTrace[INDEX_MAX] = Setting.SettingStruct.micaWidth[INDEX_VALUE];Setting.SettingStruct.micaPreTrace[INDEX_MIN] = 0;
+				Setting.SettingStruct.micaPreTrace[INDEX_MAX] = (Setting.SettingStruct.plusNumberOfMoto[INDEX_VALUE]/Setting.SettingStruct.slotNumber[INDEX_VALUE])-
+														Setting.SettingStruct.micaWidth[INDEX_VALUE];
+														Setting.SettingStruct.micaPreTrace[INDEX_MIN] = 0;
 				Setting.SettingStruct.diameter[INDEX_SIZE] = 3; 
 				Setting.SettingStruct.footerExitTime[INDEX_SIZE] = 2; 
 				Setting.SettingStruct.slotNumber[INDEX_SIZE] = 3; 
@@ -1308,7 +1322,7 @@ uint16_t incNumBit(uint16_t num,uint8_t bit)
 			}
 			para_to_set();
 	}
-	
+//???'2??ü????
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
